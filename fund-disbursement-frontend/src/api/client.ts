@@ -24,10 +24,26 @@ class ApiClient {
     // Request interceptor - add auth token
     this.client.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('accessToken');
+        const token = sessionStorage.getItem('accessToken');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
+        
+        // Log request details for debugging
+        console.log('API Request:', {
+          method: config.method?.toUpperCase(),
+          url: config.url,
+          baseURL: config.baseURL,
+          fullURL: `${config.baseURL}${config.url}`,
+          headers: {
+            'Content-Type': config.headers['Content-Type'],
+            'Accept': config.headers['Accept'],
+            'Authorization': config.headers.Authorization ? 'Bearer [TOKEN_PRESENT]' : 'No Authorization',
+          },
+          params: config.params,
+          data: config.data,
+        });
+        
         return config;
       },
       (error) => Promise.reject(error)
@@ -37,17 +53,31 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response) => response,
       async (error: AxiosError<ApiResponse>) => {
+        console.error('API Error:', {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          config: {
+            url: error.config?.url,
+            method: error.config?.method,
+            headers: error.config?.headers,
+          }
+        });
+
         if (error.response?.status === 401) {
           // Handle token refresh or redirect to login
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          localStorage.removeItem('user');
+          sessionStorage.removeItem('accessToken');
+          sessionStorage.removeItem('refreshToken');
+          sessionStorage.removeItem('user');
           window.location.href = '/login';
         }
         
-        // Format error message
-        const message = error.response?.data?.message || 'An error occurred';
-        throw new Error(message);
+        // Format error message with more details for debugging
+        const status = error.response?.status;
+        const statusText = error.response?.statusText;
+        const message = error.response?.data?.message || error.message || 'An error occurred';
+        
+        throw new Error(`${status ? `${status} ${statusText}: ` : ''}${message}`);
       }
     );
   }
@@ -59,6 +89,11 @@ class ApiClient {
 
   async post<T>(url: string, data?: any): Promise<ApiResponse<T>> {
     const response = await this.client.post<ApiResponse<T>>(url, data);
+    return response.data;
+  }
+
+  async put<T>(url: string, data?: any): Promise<ApiResponse<T>> {
+    const response = await this.client.put<ApiResponse<T>>(url, data);
     return response.data;
   }
 

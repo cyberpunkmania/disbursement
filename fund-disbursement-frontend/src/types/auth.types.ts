@@ -3,23 +3,31 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface OtpVerificationRequest {
-  username: string; // email used in login
-  otp: string;
+export interface LoginResponse {
+  success: boolean;
+  responseCode: number;
+  responseMessage: string;
+  message: string;
+  data: {
+    message: string | null;
+    access_token: string;
+    refresh_token: string;
+  };
+  timestamp: string;
+  requestId: string;
 }
 
+export interface User {
+  id: number;
+  role: 'ADMIN' | 'USER';
+  sub: string; // email from JWT
+  iat: number;
+  exp: number;
+}
+
+// Legacy types for compatibility
 export interface AuthResponse {
   accessToken: string;
   refreshToken?: string;
   user: User;
-}
-
-export interface User {
-  id: string;
-  userCode: string;
-  email: string;
-  phone?: string;
-  firstName: string;
-  lastName: string;
-  role: 'ADMIN' | 'USER';
 }

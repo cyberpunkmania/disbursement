@@ -1,3 +1,131 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom responsive utilities for 100% magnifier support */
+@layer base {
+  html {
+    /* Ensure proper scaling on high zoom levels */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
+  body {
+    /* Prevent horizontal scrolling on zoom */
+    overflow-x: hidden;
+  }
+  
+  /* Ensure proper text wrapping */
+  * {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+@layer utilities {
+  /* Custom responsive utilities */
+  .text-responsive {
+    font-size: clamp(0.875rem, 2.5vw, 1rem);
+  }
+  
+  .text-responsive-lg {
+    font-size: clamp(1rem, 3vw, 1.125rem);
+  }
+  
+  .text-responsive-xl {
+    font-size: clamp(1.125rem, 3.5vw, 1.25rem);
+  }
+  
+  .text-responsive-2xl {
+    font-size: clamp(1.25rem, 4vw, 1.5rem);
+  }
+  
+  .text-responsive-3xl {
+    font-size: clamp(1.5rem, 5vw, 1.875rem);
+  }
+  
+  /* Responsive spacing utilities */
+  .space-responsive {
+    gap: clamp(0.5rem, 2vw, 1rem);
+  }
+  
+  .p-responsive {
+    padding: clamp(0.5rem, 2vw, 1rem);
+  }
+  
+  .px-responsive {
+    padding-left: clamp(0.5rem, 2vw, 1rem);
+    padding-right: clamp(0.5rem, 2vw, 1rem);
+  }
+  
+  .py-responsive {
+    padding-top: clamp(0.5rem, 2vw, 1rem);
+    padding-bottom: clamp(0.5rem, 2vw, 1rem);
+  }
+  
+  /* Responsive container utilities */
+  .container-responsive {
+    width: 100%;
+    max-width: none;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: clamp(0.5rem, 2vw, 1rem);
+    padding-right: clamp(0.5rem, 2vw, 1rem);
+  }
+  
+  /* Ensure proper grid behavior on zoom */
+  .grid-responsive {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: clamp(0.5rem, 2vw, 1.5rem);
+  }
+  
+  /* Flexible button sizing */
+  .btn-responsive {
+    padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem);
+    font-size: clamp(0.875rem, 2.5vw, 1rem);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .border-gray-200 {
+    border-color: #000;
+  }
+  
+  .border-gray-300 {
+    border-color: #000;
+  }
+  
+  .text-gray-500 {
+    color: #000;
+  }
+  
+  .text-gray-600 {
+    color: #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-pulse-slow {
+    animation: none;
+  }
+  
+  .transition-all,
+  .transition-colors,
+  .transition-shadow,
+  .transition-transform {
+    transition: none;
+  }
+}
+
+/* Focus visible improvements for accessibility */
+@layer utilities {
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2;
+  }
+}

@@ -26,13 +26,27 @@ export const Login: React.FC = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await AuthService.login(data as LoginRequest);
+      console.log('Login form submitted with:', data);
+      const authResponse = await AuthService.login(data as LoginRequest);
       
-      if (response.success) {
-        // Navigate to OTP verification after successful login
-        navigate('/verify-otp');
+      console.log('AuthService response received:', authResponse);
+      console.log('User role:', authResponse.user.role);
+      
+      // Small delay to ensure state is properly set
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Direct navigation based on user role
+      if (authResponse.user.role === 'ADMIN') {
+        console.log('Navigating to admin dashboard');
+        navigate('/admin/dashboard', { replace: true });
+      } else {
+        console.log('Navigating to user dashboard');
+        navigate('/user/dashboard', { replace: true });
       }
+      
+      console.log('Navigation completed');
     } catch (error) {
+      console.error('Login error:', error);
       setError(error instanceof Error ? error.message : 'Login failed');
     } finally {
       setLoading(false);

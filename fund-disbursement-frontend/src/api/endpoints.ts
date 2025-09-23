@@ -2,14 +2,39 @@
 export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: '/auth/fund-disbursement/authenticate',
-    VERIFY_OTP: '/auth/fund-disbursement/verify-otp',
     REFRESH: '/auth/refresh-token',
   },
   ADMIN: {
+    // Position endpoints - Updated to match API specification
+    POSITIONS: '/api/admin/positions',
+    POSITION_BY_UUID: (uuid: string) => `/api/admin/positions/${uuid}`,
+    
+    // Worker endpoints
     WORKERS: '/admin/workers',
-    POSITIONS: '/admin/positions',
+    WORKER_BY_UUID: (uuid: string) => `/admin/workers/${uuid}`,
+    WORKER_TOGGLE_PAYABLE: (uuid: string) => `/admin/workers/${uuid}/payable`,
+    
+    // Legacy endpoints (keeping for backward compatibility)
     PAYROLL: '/admin/payroll',
     DISBURSEMENTS: '/admin/disbursements',
+  },
+  PAYROLL: {
+    PERIODS: '/payroll/periods',
+    PERIOD_BY_UUID: (uuid: string) => `/payroll/periods/${uuid}`,
+    GENERATE_PAY_ITEMS: (periodUuid: string) => `/payroll/periods/${periodUuid}/items:auto`,
+    APPROVE_PERIOD: (periodUuid: string) => `/payroll/periods/${periodUuid}/approve`,
+    PERIOD_APPROVE: (uuid: string) => `/payroll/periods/${uuid}/approve`,
+    PERIOD_LOCK: (uuid: string) => `/payroll/periods/${uuid}/lock`,
+  },
+  DISBURSEMENTS: {
+    FROM_PERIOD: (periodUuid: string) => `/disbursements/from-period/${periodUuid}`,
+    SINGLE: '/disbursements/single',
+    BATCH: '/disbursements/batch',
+    SEND_BATCH: (batchUuid: string) => `/disbursements/send/${batchUuid}`,
+    BATCH_DISBURSE: (batchUuid: string) => `/disbursements/disburse/${batchUuid}`,
+  },
+  MPESA: {
+    INITIATE: '/mpesa/initiate',
   },
   USER: {
     DISBURSEMENTS: '/disbursements',
