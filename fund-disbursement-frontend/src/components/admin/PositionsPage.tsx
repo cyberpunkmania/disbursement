@@ -6,7 +6,6 @@ import {
   BuildingOfficeIcon,
   MagnifyingGlassIcon,
   FunnelIcon,
-  CheckCircleIcon,
   XCircleIcon
 } from '@heroicons/react/24/outline';
 import { usePositions, useDeletePosition } from '@/hooks/useAdmin';
@@ -21,16 +20,18 @@ const PositionsPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPosition, setEditingPosition] = useState<Position | undefined>();
 
-  const { data: positions, isLoading, error } = usePositions(showActiveOnly);
+  const { data: positions, isLoading, error } = usePositions();
   const deletePositionMutation = useDeletePosition();
   const { addNotification } = useNotifications();
 
-  // Filter positions based on search term
+  // Filter positions based on search term and active status
   const filteredPositions = (positions || [])
-    .filter(position =>
-      position.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (position.description && position.description.toLowerCase().includes(searchTerm.toLowerCase()))
-    )
+    .filter(position => {
+      const matchesSearch = position.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (position.description && position.description.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesActiveFilter = showActiveOnly ? position.active : true;
+      return matchesSearch && matchesActiveFilter;
+    })
     .sort((a, b) => {
       const aTime = a.createdAt ? Date.parse(a.createdAt) : 0;
       const bTime = b.createdAt ? Date.parse(b.createdAt) : 0;

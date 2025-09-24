@@ -40,7 +40,7 @@ class AdminService {
 
   // ============== POSITION MANAGEMENT ==============
   
-  async getPositions(activeOnly?: boolean): Promise<ApiResponse<Position[]>> {
+  async getPositions(): Promise<ApiResponse<Position[]>> {
     try {
       // Backend provides all positions at /admin/positions; filter on client
       const response = await apiClient.get<Position[]>(
