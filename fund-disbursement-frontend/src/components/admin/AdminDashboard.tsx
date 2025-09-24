@@ -315,44 +315,7 @@ export default function AdminDashboard() {
     },
   });
 
-  const createWorkerMutation = useMutation({
-    mutationFn: adminService.createWorker,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['workers'] });
-      addNotification({
-        type: 'success',
-        title: 'Worker Created',
-        message: 'Worker has been successfully created.',
-      });
-    },
-    onError: (error: any) => {
-      addNotification({
-        type: 'error',
-        title: 'Failed to Create Worker',
-        message: error?.message || 'An error occurred while creating the worker.',
-      });
-    },
-  });
 
-  const updateWorkerMutation = useMutation({
-    mutationFn: ({ uuid, data }: { uuid: string; data: any }) => 
-      adminService.updateWorker(uuid, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['workers'] });
-      addNotification({
-        type: 'success',
-        title: 'Worker Updated',
-        message: 'Worker has been successfully updated.',
-      });
-    },
-    onError: (error: any) => {
-      addNotification({
-        type: 'error',
-        title: 'Failed to Update Worker',
-        message: error?.message || 'An error occurred while updating the worker.',
-      });
-    },
-  });
 
   const deleteWorkerMutation = useMutation({
     mutationFn: adminService.deleteWorker,
@@ -510,17 +473,7 @@ export default function AdminDashboard() {
     setPositionModal({ isOpen: false });
   };
 
-  const handleWorkerSubmit = async (data: any) => {
-    if (workerModal.data) {
-      await updateWorkerMutation.mutateAsync({
-        uuid: workerModal.data.uuid,
-        data,
-      });
-    } else {
-      await createWorkerMutation.mutateAsync(data);
-    }
-    setWorkerModal({ isOpen: false });
-  };
+
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -714,9 +667,7 @@ export default function AdminDashboard() {
       <WorkerModal
         isOpen={workerModal.isOpen}
         onClose={() => setWorkerModal({ isOpen: false })}
-        data={workerModal.data}
-        positions={positions?.data || []}
-        onSubmit={handleWorkerSubmit}
+        worker={workerModal.data}
       />
     </div>
   );

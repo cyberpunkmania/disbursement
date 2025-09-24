@@ -231,6 +231,11 @@ const PositionsPage: React.FC = () => {
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 truncate">
                       {position.description || 'No description provided'}
                     </p>
+                    {position.multiplier !== undefined && (
+                      <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+                        Multiplier: {position.multiplier}
+                      </p>
+                    )}
                   </div>
                   <div className="flex items-center space-x-2 ml-4">
                     <button

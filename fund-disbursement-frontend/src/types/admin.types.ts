@@ -19,18 +19,21 @@ export interface Position {
   name: string;
   active: boolean;
   description?: string;
+  multiplier?: number;
 }
 
 export interface CreatePositionRequest {
   name: string;
   description?: string;
   active?: boolean;
+  multiplier?: number;
 }
 
 export interface UpdatePositionRequest {
   name?: string;
   description?: string;
   active?: boolean;
+  multiplier?: number;
 }
 
 // Worker Types

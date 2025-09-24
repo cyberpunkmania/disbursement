@@ -1,5 +1,4 @@
 // Test script to verify API endpoints
-import apiClient from './api/client';
 
 interface TestResult {
   endpoint: string;

@@ -28,11 +28,12 @@ export const testTokenManually = async (token: string) => {
       status: response.status,
       data,
     };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Manual token test error:', error);
+    const message = error instanceof Error ? error.message : String(error);
     return {
       success: false,
-      error: error.message,
+      error: message,
     };
   }
 };

@@ -16,6 +16,7 @@ import WorkersPage from './components/admin/WorkersPage';
 import PayrollPage from './components/admin/PayrollPage';
 import DisbursementsPage from './components/admin/DisbursementsPage';
 import SettingsPage from './components/admin/SettingsPage';
+import PositionsApiTest from './components/admin/PositionsApiTest';
 
 // User Pages
 import { UserLayout } from './components/layout/UserLayout';
@@ -74,6 +75,7 @@ function App() {
             >
               <Route path="dashboard" element={<ModernAdminDashboard />} />
               <Route path="positions" element={<PositionsPage />} />
+              <Route path="positions-test" element={<PositionsApiTest />} />
               <Route path="workers" element={<WorkersPage />} />
               <Route path="payroll" element={<PayrollPage />} />
               <Route path="disbursements" element={<DisbursementsPage />} />

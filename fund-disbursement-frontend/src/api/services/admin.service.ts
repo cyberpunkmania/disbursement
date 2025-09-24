@@ -40,16 +40,11 @@ class AdminService {
 
   // ============== POSITION MANAGEMENT ==============
   
-  async getPositions(activeOnly?: boolean): Promise<ApiResponse<Position[]>> {
+  async getPositions(): Promise<ApiResponse<Position[]>> {
     try {
-      const params: Record<string, string> = {};
-      if (typeof activeOnly === 'boolean') {
-        params.activeOnly = activeOnly.toString();
-      }
-      
+      // Always fetch ALL positions from the API without any query parameters
       const response = await apiClient.get<Position[]>(
-        API_ENDPOINTS.ADMIN.POSITIONS,
-        params
+        API_ENDPOINTS.ADMIN.POSITIONS
       );
       return response;
     } catch (error) {
@@ -78,7 +73,16 @@ class AdminService {
       ...data,
       name: this.sanitizeString(data.name),
       description: data.description ? this.sanitizeString(data.description) : undefined,
+      multiplier: data.multiplier !== undefined ? data.multiplier : undefined,
     };
+
+    // Validate multiplier (allow 0 or 1)
+    if (sanitizedData.multiplier !== undefined) {
+      const multResult = positiveNumberSchema.safeParse(sanitizedData.multiplier);
+      if (!multResult.success || (sanitizedData.multiplier !== 0 && sanitizedData.multiplier !== 1)) {
+        throw new Error('Multiplier must be 0 or 1');
+      }
+    }
 
     try {
       const response = await apiClient.post<Position>(
@@ -99,7 +103,16 @@ class AdminService {
       ...data,
       name: data.name ? this.sanitizeString(data.name) : undefined,
       description: data.description ? this.sanitizeString(data.description) : undefined,
+      multiplier: data.multiplier !== undefined ? data.multiplier : undefined,
     };
+
+    // Validate multiplier if provided
+    if (sanitizedData.multiplier !== undefined) {
+      const multResult = positiveNumberSchema.safeParse(sanitizedData.multiplier);
+      if (!multResult.success || (sanitizedData.multiplier !== 0 && sanitizedData.multiplier !== 1)) {
+        throw new Error('Multiplier must be 0 or 1');
+      }
+    }
 
     try {
       const response = await apiClient.patch<Position>(

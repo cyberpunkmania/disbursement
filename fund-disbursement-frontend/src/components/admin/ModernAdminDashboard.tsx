@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 import { 
   ChartBarIcon,
   UserGroupIcon,
-  CurrencyDollarIcon,
   DocumentTextIcon,
   BuildingOfficeIcon,
-  ShieldCheckIcon,
   PlusIcon,
   PencilIcon,
   TrashIcon,
-  EyeIcon,
+  
   ArrowUpIcon,
   ArrowDownIcon,
   ClockIcon,
@@ -23,12 +21,11 @@ import {
   useDeletePosition,
   useDeleteWorker,
 } from '@/hooks/useAdmin';
-import { adminService } from '@/api/services/admin.service';
 import { useNotifications } from '@/components/ui/NotificationProvider';
 import { PositionModal } from './PositionModal';
 import { WorkerModal } from './WorkerModal';
-import ApiTestComponent from './ApiTestComponent';
-import PositionEndpointTest from './PositionEndpointTest';
+import PositionFilterTest from './PositionFilterTest';
+import ErrorBoundary from '../common/ErrorBoundary';
 import type { Position, Worker } from '@/types/admin.types';
 
 // Modern Chart Component (placeholder for real charts)
@@ -136,7 +133,7 @@ const ModernAdminDashboard: React.FC = () => {
   const stats = useDashboardStats();
   const { data: positions, isLoading: positionsLoading } = usePositions();
   const { data: workers, isLoading: workersLoading } = useWorkers();
-  const { data: payPeriods, isLoading: payPeriodsLoading } = usePayPeriods();
+  const { data: payPeriods } = usePayPeriods();
 
   // Delete mutations
   const deletePositionMutation = useDeletePosition();
@@ -197,7 +194,8 @@ const ModernAdminDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-4 sm:space-y-6 animate-fade-in">
+    <ErrorBoundary>
+      <div className="space-y-4 sm:space-y-6 animate-fade-in">
       {/* Page Header */}
       <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
         <div className="min-w-0 flex-1">
@@ -275,6 +273,7 @@ const ModernAdminDashboard: React.FC = () => {
             Department Distribution
           </h3>
           <ChartComponent type="pie" data={[]} />
+          <p className="text-xs text-gray-500 mt-2">Pay periods: {payPeriods?.length || 0}</p>
         </div>
       </div>
 
@@ -407,11 +406,8 @@ const ModernAdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* API Test Component - Temporary for debugging */}
-      <ApiTestComponent />
-
-      {/* Position Endpoint Test - Comprehensive testing */}
-      <PositionEndpointTest />
+  {/* Position Filter Test - Demonstrates client-side filtering */}
+  <PositionFilterTest />
 
       {/* Security Alert */}
       <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4 sm:p-6">
@@ -436,13 +432,6 @@ const ModernAdminDashboard: React.FC = () => {
           setEditingPosition(undefined);
         }}
         position={editingPosition}
-        onSubmit={async (data) => {
-          if (editingPosition) {
-            await adminService.updatePosition(editingPosition.uuid, data as any);
-          } else {
-            await adminService.createPosition(data as any);
-          }
-        }}
       />
 
       <WorkerModal
@@ -453,7 +442,8 @@ const ModernAdminDashboard: React.FC = () => {
         }}
         worker={editingWorker}
       />
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 };
 

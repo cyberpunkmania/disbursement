@@ -5,7 +5,7 @@ import { adminService } from '@/api/services/admin.service';
 import { testTokenManually, setTestToken } from '@/utils/tokenTest';
 
 const ApiTestComponent: React.FC = () => {
-  const { data: positions, isLoading, error } = usePositions(false);
+  const { data: positions, isLoading, error } = usePositions();
   const user = AuthService.getCurrentUser();
   const token = AuthService.getAccessToken();
   const [testResult, setTestResult] = useState<string>('');
@@ -23,7 +23,7 @@ const ApiTestComponent: React.FC = () => {
       console.log('Token being used:', token);
       console.log('User:', user);
       
-      const result = await adminService.getPositions(false);
+  const result = await adminService.getPositions();
       console.log('Direct API call result:', result);
       
       setTestResult(`Success: Got ${result.data?.length || 0} positions`);

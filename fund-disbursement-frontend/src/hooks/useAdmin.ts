@@ -1,13 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { adminService } from '../api/services/admin.service';
 import type {
-  Position,
   CreatePositionRequest,
   UpdatePositionRequest,
-  Worker,
   CreateWorkerRequest,
   UpdateWorkerRequest,
-  PayPeriod,
   CreatePayPeriodRequest,
   CreateSingleDisbursementRequest,
   MPesaInitiateRequest,
@@ -27,9 +24,15 @@ export const ADMIN_QUERY_KEYS = {
 
 export const usePositions = (activeOnly?: boolean) => {
   return useQuery({
-    queryKey: [...ADMIN_QUERY_KEYS.POSITIONS, { activeOnly }],
-    queryFn: () => adminService.getPositions(activeOnly),
-    select: (data) => data.data,
+    queryKey: ADMIN_QUERY_KEYS.POSITIONS,
+    queryFn: () => adminService.getPositions(),
+    select: (data) => {
+      const positions = data.data || [];
+      if (typeof activeOnly === 'boolean') {
+        return positions.filter((p) => p.active === activeOnly);
+      }
+      return positions;
+    },
   });
 };
 
