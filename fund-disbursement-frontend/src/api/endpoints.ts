@@ -6,8 +6,8 @@ export const API_ENDPOINTS = {
   },
   ADMIN: {
     // Position endpoints - Updated to match API specification
-    POSITIONS: '/api/admin/positions',
-    POSITION_BY_UUID: (uuid: string) => `/api/admin/positions/${uuid}`,
+    POSITIONS: '/admin/positions',
+    POSITION_BY_UUID: (uuid: string) => `/admin/positions/${uuid}`,
     
     // Worker endpoints
     WORKERS: '/admin/workers',
@@ -22,7 +22,6 @@ export const API_ENDPOINTS = {
     PERIODS: '/payroll/periods',
     PERIOD_BY_UUID: (uuid: string) => `/payroll/periods/${uuid}`,
     GENERATE_PAY_ITEMS: (periodUuid: string) => `/payroll/periods/${periodUuid}/items:auto`,
-    APPROVE_PERIOD: (periodUuid: string) => `/payroll/periods/${periodUuid}/approve`,
     PERIOD_APPROVE: (uuid: string) => `/payroll/periods/${uuid}/approve`,
     PERIOD_LOCK: (uuid: string) => `/payroll/periods/${uuid}/lock`,
   },

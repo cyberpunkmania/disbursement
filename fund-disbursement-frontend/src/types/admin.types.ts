@@ -20,6 +20,7 @@ export interface Position {
   active: boolean;
   description?: string;
   multiplier?: number;
+  createdAt?: string;
 }
 
 export interface CreatePositionRequest {

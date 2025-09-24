@@ -40,9 +40,9 @@ class AdminService {
 
   // ============== POSITION MANAGEMENT ==============
   
-  async getPositions(): Promise<ApiResponse<Position[]>> {
+  async getPositions(activeOnly?: boolean): Promise<ApiResponse<Position[]>> {
     try {
-      // Always fetch ALL positions from the API without any query parameters
+      // Backend provides all positions at /admin/positions; filter on client
       const response = await apiClient.get<Position[]>(
         API_ENDPOINTS.ADMIN.POSITIONS
       );
@@ -240,7 +240,7 @@ class AdminService {
     }
 
     try {
-      const response = await apiClient.put<Worker>(
+      const response = await apiClient.patch<Worker>(
         API_ENDPOINTS.ADMIN.WORKER_BY_UUID(uuid),
         sanitizedData
       );
@@ -265,13 +265,12 @@ class AdminService {
     }
   }
 
-  async toggleWorkerPayableStatus(uuid: string): Promise<ApiResponse<Worker>> {
+  async toggleWorkerPayableStatus(uuid: string, payable: boolean): Promise<ApiResponse<Worker>> {
     this.validateUuid(uuid);
     
     try {
-      const response = await apiClient.patch<Worker>(
-        API_ENDPOINTS.ADMIN.WORKER_TOGGLE_PAYABLE(uuid)
-      );
+      const url = `${API_ENDPOINTS.ADMIN.WORKER_TOGGLE_PAYABLE(uuid)}?payable=${encodeURIComponent(String(payable))}`;
+      const response = await apiClient.patch<Worker>(url);
       return response;
     } catch (error) {
       console.error(`Failed to toggle payable status for worker ${uuid}:`, error);
@@ -472,7 +471,7 @@ class AdminService {
     this.validateUuid(uuid);
     
     try {
-      const response = await apiClient.patch<PayPeriod>(
+      const response = await apiClient.post<PayPeriod>(
         API_ENDPOINTS.PAYROLL.PERIOD_APPROVE(uuid)
       );
       return response;
@@ -492,6 +491,45 @@ class AdminService {
       return response;
     } catch (error) {
       console.error(`Failed to lock pay period ${uuid}:`, error);
+      throw error;
+    }
+  }
+
+  async generatePayItems(periodUuid: string): Promise<ApiResponse<StatusResponse>> {
+    this.validateUuid(periodUuid);
+    try {
+      const response = await apiClient.post<StatusResponse>(
+        API_ENDPOINTS.PAYROLL.GENERATE_PAY_ITEMS(periodUuid)
+      );
+      return response;
+    } catch (error) {
+      console.error(`Failed to generate pay items for period ${periodUuid}:`, error);
+      throw error;
+    }
+  }
+
+  async createBatchFromPeriod(periodUuid: string): Promise<ApiResponse<BatchResponse>> {
+    this.validateUuid(periodUuid);
+    try {
+      const response = await apiClient.post<BatchResponse>(
+        API_ENDPOINTS.DISBURSEMENTS.FROM_PERIOD(periodUuid)
+      );
+      return response;
+    } catch (error) {
+      console.error(`Failed to create batch from period ${periodUuid}:`, error);
+      throw error;
+    }
+  }
+
+  async sendBatch(batchUuid: string): Promise<ApiResponse<StatusResponse>> {
+    this.validateUuid(batchUuid);
+    try {
+      const response = await apiClient.post<StatusResponse>(
+        API_ENDPOINTS.DISBURSEMENTS.SEND_BATCH(batchUuid)
+      );
+      return response;
+    } catch (error) {
+      console.error(`Failed to send batch ${batchUuid}:`, error);
       throw error;
     }
   }

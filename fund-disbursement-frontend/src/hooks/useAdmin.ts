@@ -33,6 +33,8 @@ export const usePositions = (activeOnly?: boolean) => {
       }
       return positions;
     },
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -88,6 +90,8 @@ export const useWorkers = () => {
     queryKey: ADMIN_QUERY_KEYS.WORKERS,
     queryFn: () => adminService.getWorkers(),
     select: (data) => data.data,
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -140,8 +144,8 @@ export const useToggleWorkerPayable = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: (uuid: string) => adminService.toggleWorkerPayableStatus(uuid),
-    onSuccess: (_, uuid) => {
+    mutationFn: ({ uuid, payable }: { uuid: string; payable: boolean }) => adminService.toggleWorkerPayableStatus(uuid, payable),
+    onSuccess: (_, { uuid }) => {
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.WORKERS });
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.WORKER(uuid) });
     },
@@ -155,6 +159,8 @@ export const usePayPeriods = () => {
     queryKey: ADMIN_QUERY_KEYS.PAY_PERIODS,
     queryFn: () => adminService.getPayPeriods(),
     select: (data) => data.data,
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -224,6 +230,24 @@ export const useLockPayPeriod = () => {
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.PAY_PERIODS });
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.PAY_PERIOD(uuid) });
     },
+  });
+};
+
+export const useGeneratePayItems = () => {
+  return useMutation({
+    mutationFn: (periodUuid: string) => adminService.generatePayItems(periodUuid),
+  });
+};
+
+export const useCreateBatchFromPeriod = () => {
+  return useMutation({
+    mutationFn: (periodUuid: string) => adminService.createBatchFromPeriod(periodUuid),
+  });
+};
+
+export const useSendBatch = () => {
+  return useMutation({
+    mutationFn: (batchUuid: string) => adminService.sendBatch(batchUuid),
   });
 };
 
