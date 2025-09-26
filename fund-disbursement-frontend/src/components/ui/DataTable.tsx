@@ -28,13 +28,13 @@ export function DataTable<T extends { uuid?: string | number }>({ columns, data,
         )}
       </TableHeader>
       <TableBody emptyContent={emptyLabel || 'No data available'} items={items}>
-        {(row: T, rowIndex: number) => (
-          <TableRow key={(row as any).uuid ?? rowIndex}>
+        {(item: T) => (
+          <TableRow key={(item as any).uuid ?? (item as any).id ?? JSON.stringify(item)}>
             {(columnKey: React.Key) => {
               const col = columns.find((c) => c.key === columnKey);
               return (
                 <TableCell key={String(columnKey)} className={col?.className}>
-                  {col?.render ? col.render(row) : (row as any)[String(columnKey)]}
+                  {col?.render ? col.render(item) : (item as any)[String(columnKey)]}
                 </TableCell>
               );
             }}
