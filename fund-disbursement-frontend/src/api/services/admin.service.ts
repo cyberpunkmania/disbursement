@@ -9,6 +9,10 @@ import type {
   UpdateWorkerRequest,
   PayPeriod,
   CreatePayPeriodRequest,
+  UpdatePayPeriodRequest,
+  PayrollSearchParams,
+  PayrollSearchResponse,
+  PayrollCsvParams,
   CreateSingleDisbursementRequest,
   DisbursementResponse,
   MPesaInitiateRequest,
@@ -282,10 +286,22 @@ class AdminService {
   
   async getPayPeriods(): Promise<ApiResponse<PayPeriod[]>> {
     try {
-      const response = await apiClient.get<PayPeriod[]>(
-        API_ENDPOINTS.PAYROLL.PERIODS
-      );
-      return response;
+      // Backend list endpoint appears to be /payroll/search returning paginated content
+      const searchResponse = await apiClient.get<{
+        content: PayPeriod[];
+        page: number;
+        size: number;
+        totalElements: number;
+        totalPages: number;
+        first: boolean;
+        last: boolean;
+      }>(API_ENDPOINTS.PAYROLL.PERIOD_SEARCH);
+
+      // Adapt to ApiResponse<PayPeriod[]> shape expected by callers
+      return {
+        ...(searchResponse as unknown as ApiResponse<any>),
+        data: (searchResponse as any).data?.content || (searchResponse as any).content || [],
+      } as ApiResponse<PayPeriod[]>;
     } catch (error) {
       console.error('Failed to fetch pay periods:', error);
       throw error;
@@ -422,7 +438,7 @@ class AdminService {
 
   // ============== ADDITIONAL PAY PERIOD OPERATIONS ==============
   
-  async updatePayPeriod(uuid: string, data: Partial<CreatePayPeriodRequest>): Promise<ApiResponse<PayPeriod>> {
+  async updatePayPeriod(uuid: string, data: UpdatePayPeriodRequest): Promise<ApiResponse<PayPeriod>> {
     this.validateUuid(uuid);
     
     // Input validation and sanitization
@@ -443,7 +459,7 @@ class AdminService {
 
     try {
       const response = await apiClient.put<PayPeriod>(
-        API_ENDPOINTS.PAYROLL.PERIOD_BY_UUID(uuid),
+        API_ENDPOINTS.PAYROLL.PERIOD_UPDATE(uuid),
         sanitizedData
       );
       return response;
@@ -530,6 +546,83 @@ class AdminService {
       return response;
     } catch (error) {
       console.error(`Failed to send batch ${batchUuid}:`, error);
+      throw error;
+    }
+  }
+
+  // ============== NEW PAYROLL ENDPOINTS ==============
+  
+  async getPayPeriodById(uuid: string): Promise<ApiResponse<PayPeriod>> {
+    this.validateUuid(uuid);
+    try {
+      const response = await apiClient.get<PayPeriod>(
+        API_ENDPOINTS.PAYROLL.PERIOD_GET(uuid)
+      );
+      return response;
+    } catch (error) {
+      console.error(`Failed to fetch pay period ${uuid}:`, error);
+      throw error;
+    }
+  }
+
+  async searchPayPeriods(params: PayrollSearchParams = {}): Promise<ApiResponse<PayrollSearchResponse>> {
+    try {
+      const queryParams = new URLSearchParams();
+      
+      // Add query parameters
+      if (params.q) queryParams.append('q', params.q);
+      if (params.g) queryParams.append('g', params.g);
+      if (params.status) queryParams.append('status', params.status);
+      if (params.frequency) queryParams.append('frequency', params.frequency);
+      if (params.startFrom) queryParams.append('startFrom', params.startFrom);
+      if (params.startTo) queryParams.append('startTo', params.startTo);
+      if (params.createdFrom) queryParams.append('createdFrom', params.createdFrom);
+      if (params.createdTo) queryParams.append('createdTo', params.createdTo);
+      if (params.page !== undefined) queryParams.append('page', params.page.toString());
+      if (params.size !== undefined) queryParams.append('size', params.size.toString());
+      if (params.sort) queryParams.append('sort', params.sort);
+
+      const url = `${API_ENDPOINTS.PAYROLL.PERIOD_SEARCH}?${queryParams.toString()}`;
+      const response = await apiClient.get<PayrollSearchResponse>(url);
+      return response;
+    } catch (error) {
+      console.error('Failed to search pay periods:', error);
+      throw error;
+    }
+  }
+
+  async exportPayPeriodsCsv(params: PayrollCsvParams = {}): Promise<Blob> {
+    try {
+      const queryParams = new URLSearchParams();
+      
+      // Add query parameters
+      if (params.q) queryParams.append('q', params.q);
+      if (params.status) queryParams.append('status', params.status);
+      if (params.frequency) queryParams.append('frequency', params.frequency);
+      if (params.startFrom) queryParams.append('startFrom', params.startFrom);
+      if (params.startTo) queryParams.append('startTo', params.startTo);
+      if (params.endFrom) queryParams.append('endFrom', params.endFrom);
+      if (params.endTo) queryParams.append('endTo', params.endTo);
+      if (params.createdFrom) queryParams.append('createdFrom', params.createdFrom);
+      if (params.createdTo) queryParams.append('createdTo', params.createdTo);
+      if (params.sort) queryParams.append('sort', params.sort);
+
+      const url = `${API_ENDPOINTS.PAYROLL.PERIOD_CSV}?${queryParams.toString()}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'text/csv',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to export CSV: ${response.statusText}`);
+      }
+
+      return await response.blob();
+    } catch (error) {
+      console.error('Failed to export pay periods CSV:', error);
       throw error;
     }
   }

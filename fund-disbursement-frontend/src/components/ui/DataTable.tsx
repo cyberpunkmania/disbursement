@@ -1,4 +1,5 @@
 import React from 'react';
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/react';
 
 type Column<T> = {
   key: string;
@@ -14,40 +15,37 @@ interface DataTableProps<T> {
 }
 
 export function DataTable<T extends { uuid?: string | number }>({ columns, data, emptyLabel }: DataTableProps<T>) {
-  if (!data || data.length === 0) {
-    return (
-      <div className="p-6 text-center text-sm text-gray-500 dark:text-gray-400">
-        {emptyLabel || 'No data available'}
-      </div>
-    );
-  }
+  const items = Array.isArray(data) ? data : [];
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-dark-700">
-        <thead className="bg-gray-50 dark:bg-dark-700/50">
-          <tr>
-            {columns.map((c) => (
-              <th key={c.key} className={`px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${c.className || ''}`}>{c.header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="bg-white dark:bg-dark-800 divide-y divide-gray-200 dark:divide-dark-700">
-          {data.map((row, idx) => (
-            <tr key={(row as any).uuid ?? idx}>
-              {columns.map((c) => (
-                <td key={c.key} className={`px-4 py-3 text-sm ${c.className || ''}`}>
-                  {c.render ? c.render(row) : (row as any)[c.key]}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Table
+      aria-label="Data table"
+      removeWrapper
+    >
+      <TableHeader columns={columns.map((c) => ({ key: c.key, name: c.header, className: c.className }))}>
+        {(column: any) => (
+          <TableColumn key={column.key} className={column.className}>{column.name}</TableColumn>
+        )}
+      </TableHeader>
+      <TableBody emptyContent={emptyLabel || 'No data available'} items={items}>
+        {(row: T, rowIndex: number) => (
+          <TableRow key={(row as any).uuid ?? rowIndex}>
+            {(columnKey: React.Key) => {
+              const col = columns.find((c) => c.key === columnKey);
+              return (
+                <TableCell key={String(columnKey)} className={col?.className}>
+                  {col?.render ? col.render(row) : (row as any)[String(columnKey)]}
+                </TableCell>
+              );
+            }}
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   );
 }
 
 export default DataTable;
+
 
 

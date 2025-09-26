@@ -106,6 +106,52 @@ export interface CreatePayPeriodRequest {
   label?: string;
 }
 
+export interface UpdatePayPeriodRequest {
+  frequency?: PayPeriodFrequency;
+  startDate?: string; // YYYY-MM-DD
+  endDate?: string; // YYYY-MM-DD
+  label?: string;
+}
+
+// Payroll search and filter types
+export interface PayrollSearchParams {
+  q?: string;
+  g?: string;
+  status?: PayPeriodStatus;
+  frequency?: PayPeriodFrequency;
+  startFrom?: string; // YYYY-MM-DD
+  startTo?: string; // YYYY-MM-DD
+  createdFrom?: string; // ISO date-time
+  createdTo?: string; // ISO date-time
+  page?: number;
+  size?: number;
+  sort?: string;
+}
+
+export interface PayrollSearchResponse {
+  content: PayPeriod[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
+}
+
+// CSV export parameters
+export interface PayrollCsvParams {
+  q?: string;
+  status?: PayPeriodStatus;
+  frequency?: PayPeriodFrequency;
+  startFrom?: string; // YYYY-MM-DD
+  startTo?: string; // YYYY-MM-DD
+  endFrom?: string; // YYYY-MM-DD
+  endTo?: string; // YYYY-MM-DD
+  createdFrom?: string; // ISO date-time
+  createdTo?: string; // ISO date-time
+  sort?: string;
+}
+
 // Disbursement Types
 export interface DisbursementBatch {
   batchUuid: string;

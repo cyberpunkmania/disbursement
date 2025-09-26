@@ -21,6 +21,10 @@ export const API_ENDPOINTS = {
   PAYROLL: {
     PERIODS: '/payroll/periods',
     PERIOD_BY_UUID: (uuid: string) => `/payroll/periods/${uuid}`,
+    PERIOD_UPDATE: (uuid: string) => `/payroll/update/${uuid}`,
+    PERIOD_CSV: '/payroll/periods:csv',
+    PERIOD_SEARCH: '/payroll/search',
+    PERIOD_GET: (uuid: string) => `/payroll/${uuid}`,
     GENERATE_PAY_ITEMS: (periodUuid: string) => `/payroll/periods/${periodUuid}/items:auto`,
     PERIOD_APPROVE: (uuid: string) => `/payroll/periods/${uuid}/approve`,
     PERIOD_LOCK: (uuid: string) => `/payroll/periods/${uuid}/lock`,

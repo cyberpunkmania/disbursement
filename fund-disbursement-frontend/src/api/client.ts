@@ -64,7 +64,7 @@ class ApiClient {
           }
         });
 
-        if (error.response?.status === 401) {
+        if (error.response?.status === 401 || error.response?.status === 403) {
           // Handle token refresh or redirect to login
           sessionStorage.removeItem('accessToken');
           sessionStorage.removeItem('refreshToken');

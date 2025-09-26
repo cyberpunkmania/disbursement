@@ -6,6 +6,9 @@ import type {
   CreateWorkerRequest,
   UpdateWorkerRequest,
   CreatePayPeriodRequest,
+  UpdatePayPeriodRequest,
+  PayrollSearchParams,
+  PayrollCsvParams,
   CreateSingleDisbursementRequest,
   MPesaInitiateRequest,
 } from '../types/admin.types';
@@ -188,7 +191,7 @@ export const useUpdatePayPeriod = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ uuid, data }: { uuid: string; data: Partial<CreatePayPeriodRequest> }) =>
+    mutationFn: ({ uuid, data }: { uuid: string; data: UpdatePayPeriodRequest }) =>
       adminService.updatePayPeriod(uuid, data),
     onSuccess: (_, { uuid }) => {
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.PAY_PERIODS });
@@ -248,6 +251,33 @@ export const useCreateBatchFromPeriod = () => {
 export const useSendBatch = () => {
   return useMutation({
     mutationFn: (batchUuid: string) => adminService.sendBatch(batchUuid),
+  });
+};
+
+// ============== NEW PAYROLL HOOKS ==============
+
+export const usePayPeriodById = (uuid: string) => {
+  return useQuery({
+    queryKey: ['admin', 'payPeriods', 'byId', uuid],
+    queryFn: () => adminService.getPayPeriodById(uuid),
+    select: (data) => data.data,
+    enabled: !!uuid,
+  });
+};
+
+export const useSearchPayPeriods = (params: PayrollSearchParams = {}) => {
+  return useQuery({
+    queryKey: ['admin', 'payPeriods', 'search', params],
+    queryFn: () => adminService.searchPayPeriods(params),
+    select: (data) => data.data,
+    staleTime: 30_000,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useExportPayPeriodsCsv = () => {
+  return useMutation({
+    mutationFn: (params: PayrollCsvParams = {}) => adminService.exportPayPeriodsCsv(params),
   });
 };
 
