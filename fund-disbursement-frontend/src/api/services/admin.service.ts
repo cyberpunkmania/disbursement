@@ -360,10 +360,12 @@ class AdminService {
     }
 
     try {
-      const response = await apiClient.post<DisbursementResponse>(
-        API_ENDPOINTS.DISBURSEMENTS.SINGLE,
-        data
-      );
+      // Some backend handlers expect workerUuid as a request parameter (query string)
+      // Encode it into the URL to ensure both query param and body are available.
+      const url = `${API_ENDPOINTS.DISBURSEMENTS.SINGLE}?workerUuid=${encodeURIComponent(
+        data.workerUuid
+      )}`;
+      const response = await apiClient.post<DisbursementResponse>(url, data);
       return response;
     } catch (error) {
       console.error('Failed to create single disbursement:', error);

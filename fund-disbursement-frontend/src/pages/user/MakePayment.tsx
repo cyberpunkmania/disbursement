@@ -34,9 +34,11 @@ export const MakePayment: React.FC = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await apiClient.post('/disbursements/single', {
+      // Include workerUuid as query parameter because backend may require it as a request parameter
+      const url = `/disbursements/single?workerUuid=${encodeURIComponent(selectedWorker.uuid)}`;
+      const response = await apiClient.post(url, {
         workerUuid: selectedWorker.uuid,
-        amount: parseFloat(amount)
+        amount: parseFloat(amount),
       });
 
       if (response.success) {
