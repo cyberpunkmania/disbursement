@@ -18,6 +18,7 @@ export const ADMIN_QUERY_KEYS = {
   POSITIONS: ['admin', 'positions'] as const,
   POSITION: (uuid: string) => ['admin', 'positions', uuid] as const,
   WORKERS: ['admin', 'workers'] as const,
+  WORKERS_PAGINATED: (page: number, size: number) => ['admin', 'workers', 'paginated', page, size] as const,
   WORKER: (uuid: string) => ['admin', 'workers', uuid] as const,
   PAY_PERIODS: ['admin', 'payPeriods'] as const,
   PAY_PERIOD: (uuid: string) => ['admin', 'payPeriods', uuid] as const,
@@ -90,7 +91,7 @@ export const useDeletePosition = () => {
 
 export const useWorkersPaginated = (page: number = 0, size: number = 20) => {
   return useQuery({
-    queryKey: [...ADMIN_QUERY_KEYS.WORKERS, page, size],
+    queryKey: [...ADMIN_QUERY_KEYS.WORKERS_PAGINATED(page, size)],
     queryFn: () => adminService.getWorkersPaginated(page, size).then(res => res.data),
     staleTime: 60_000,
     refetchOnWindowFocus: false,
