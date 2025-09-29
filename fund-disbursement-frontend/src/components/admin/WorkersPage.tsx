@@ -1,13 +1,29 @@
 import React from 'react';
-import { useWorkers, useDeleteWorker, useToggleWorkerPayable } from '@/hooks/useAdmin';
+import { useWorkersPaginated, useDeleteWorker, useToggleWorkerPayable } from '@/hooks/useAdmin';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useNotifications } from '@/components/ui/NotificationProvider';
 import { WorkerModal } from './WorkerModal';
 import type { Worker } from '@/types/admin.types';
 import DataTable from '@/components/ui/DataTable';
+import WorkerStatCards from './WorkerStatCards';
+
+// Add this type for paginated response
+type PaginatedWorkers = {
+  content: Worker[];
+  totalPages: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+  totalElements: number;
+};
+
+// Use the paginated search API
+const PAGE_SIZE = 20;
 
 const WorkersPage: React.FC = () => {
-  const { data: workers, isLoading } = useWorkers();
+  const [page, setPage] = React.useState(0);
+  // Explicitly type the data as PaginatedWorkers | undefined
+  const { data: workersData, isLoading } = useWorkersPaginated(page, PAGE_SIZE) as { data?: PaginatedWorkers, isLoading: boolean };
   const deleteWorkerMutation = useDeleteWorker();
   const togglePayableMutation = useToggleWorkerPayable();
   const { addNotification } = useNotifications();
@@ -40,9 +56,11 @@ const WorkersPage: React.FC = () => {
       }
     );
   };
-
+console.log("workersData:", workersData);
   return (
     <div className="w-full max-w-5xl mx-auto">
+      {/* Stat Cards */}
+      <WorkerStatCards />
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Workers</h2>
         <button onClick={handleCreate} className="bg-emerald-600 text-white px-4 py-2 rounded-lg flex items-center">
@@ -55,7 +73,7 @@ const WorkersPage: React.FC = () => {
           <div className="p-6">Loading...</div>
         ) : (
           <DataTable<Worker>
-            data={workers || []}
+            data={workersData?.content || []}
             emptyLabel="No workers to display"
             columns={[
               { key: 'fullName', header: 'Name', render: (w) => (
@@ -99,6 +117,28 @@ const WorkersPage: React.FC = () => {
               ) },
             ]}
           />
+        )}
+        {/* Pagination Controls */}
+        {workersData && workersData.totalPages > 0 && (
+          <div className="flex justify-between items-center p-4 border-t mt-2">
+            <button
+              onClick={() => setPage((p) => Math.max(p - 1, 0))}
+              disabled={workersData.first}
+              className="px-3 py-1 rounded bg-gray-100 dark:bg-dark-700 disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span>
+              Page {workersData.number + 1} of {workersData.totalPages}
+            </span>
+            <button
+              onClick={() => setPage((p) => (!workersData.last ? p + 1 : p))}
+              disabled={workersData.last}
+              className="px-3 py-1 rounded bg-gray-100 dark:bg-dark-700 disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
         )}
       </div>
 

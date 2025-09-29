@@ -11,6 +11,8 @@ export const API_ENDPOINTS = {
     
     // Worker endpoints
     WORKERS: '/admin/workers',
+    WORKERS_SEARCH: (page: number = 0, size: number = 20) =>
+      `/admin/workers/search?page=${page}&size=${size}`,
     WORKER_BY_UUID: (uuid: string) => `/admin/workers/${uuid}`,
     WORKER_TOGGLE_PAYABLE: (uuid: string) => `/admin/workers/${uuid}/payable`,
     
@@ -33,8 +35,10 @@ export const API_ENDPOINTS = {
     FROM_PERIOD: (periodUuid: string) => `/disbursements/from-period/${periodUuid}`,
     SINGLE: '/disbursements/single',
     BATCH: '/disbursements/batch',
+    BATCHES_SEARCH: (page = 0, size = 20, sortBy = 'createdAt', direction = 'desc') =>
+      `/disbursements/batches/search?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`,
+    BATCH_BY_UUID: (uuid: string) => `/disbursements/${uuid}`,
     SEND_BATCH: (batchUuid: string) => `/disbursements/send/${batchUuid}`,
-    BATCH_DISBURSE: (batchUuid: string) => `/disbursements/disburse/${batchUuid}`,
   },
   MPESA: {
     INITIATE: '/mpesa/initiate',
@@ -43,5 +47,8 @@ export const API_ENDPOINTS = {
     DISBURSEMENTS: '/disbursements',
     SINGLE_DISBURSEMENT: '/disbursements/single',
     TRANSACTIONS: '/user/transactions',
+  },
+  KPI: {
+    WORKERS: '/kpi/workers',
   },
 } as const;

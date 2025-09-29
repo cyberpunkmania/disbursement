@@ -57,6 +57,15 @@ export interface Worker {
   positionName?: string;
 }
 
+export interface WorkerKpi {
+  totalWorkers: number;
+  activeWorkers: number;
+  inactiveWorkers: number;
+  payableWorkers: number;
+  nonPayableWorkers: number;
+  kycGaps: number;
+  phoneValidPct: number;
+}
 export interface CreateWorkerRequest {
   fullName: string;
   phone: string;
