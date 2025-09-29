@@ -18,6 +18,7 @@ import type {
   MPesaInitiateRequest,
   StatusResponse,
   BatchResponse,
+  WorkerKpi,
 } from '../../types/admin.types';
 import type { ApiResponse } from '../../types/api.types';
 import { z } from 'zod';
@@ -155,6 +156,40 @@ class AdminService {
       console.error('Failed to fetch workers:', error);
       throw error;
     }
+  }
+
+  async getWorkersPaginated(page: number = 0, size: number = 20): Promise<ApiResponse<{
+    content: Worker[];
+    totalPages: number;
+    number: number;
+    first: boolean;
+    last: boolean;
+    totalElements: number;
+  }>> {
+    try {
+      const response = await apiClient.get<{
+        content: Worker[];
+        totalPages: number;
+        number: number;
+        first: boolean;
+        last: boolean;
+        totalElements: number;
+      }>(
+        API_ENDPOINTS.ADMIN.WORKERS_SEARCH(page, size)
+      );
+      return response;
+    } catch (error) {
+      console.error('Failed to fetch paginated workers:', error);
+      throw error;
+    }
+  }
+
+  async getWorkerKpi() {
+    const response = await apiClient.get<WorkerKpi>(
+        API_ENDPOINTS.KPI.WORKERS
+      );
+    console.log('KPI Response Status:', response.data);
+    return response.data;
   }
 
   async getWorkerByUuid(uuid: string): Promise<ApiResponse<Worker>> {
@@ -332,7 +367,7 @@ class AdminService {
     const startDate = new Date(sanitizedData.startDate);
     const endDate = new Date(sanitizedData.endDate);
     
-    if (startDate >= endDate) {
+    if (startDate > endDate) {
       throw new Error('Start date must be before end date');
     }
 
@@ -394,7 +429,7 @@ class AdminService {
 
     try {
       const response = await apiClient.post<StatusResponse>(
-        API_ENDPOINTS.DISBURSEMENTS.BATCH_DISBURSE(batchUuid)
+        API_ENDPOINTS.DISBURSEMENTS.SEND_BATCH(batchUuid)
       );
       return response;
     } catch (error) {
@@ -454,7 +489,7 @@ class AdminService {
       const startDate = new Date(sanitizedData.startDate);
       const endDate = new Date(sanitizedData.endDate);
       
-      if (startDate >= endDate) {
+      if (startDate > endDate) {
         throw new Error('Start date must be before end date');
       }
     }
@@ -628,6 +663,23 @@ class AdminService {
       throw error;
     }
   }
+
+  async getDisbursementBatches(page = 0, size = 20) {
+    const response = await apiClient.get(
+      API_ENDPOINTS.DISBURSEMENTS.BATCHES_SEARCH(page, size)
+    );
+    return response.data; // paginated object
+  }
+
+  async getDisbursementBatchByUuid(uuid: string) {
+    const response = await apiClient.get(API_ENDPOINTS.DISBURSEMENTS.BATCH_BY_UUID(uuid));
+    return response.data; // batch object with payouts
+  }
+
+  // async sendBatch(batchUuid: string) {
+  //   const response = await apiClient.post(API_ENDPOINTS.DISBURSEMENTS.SEND_BATCH(batchUuid));
+  //   return response.data;
+  // }
 }
 
 export const adminService = new AdminService();

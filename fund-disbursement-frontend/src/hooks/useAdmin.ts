@@ -88,11 +88,28 @@ export const useDeletePosition = () => {
 
 // ============== WORKER HOOKS ==============
 
-export const useWorkers = () => {
+export const useWorkersPaginated = (page: number = 0, size: number = 20) => {
   return useQuery({
-    queryKey: ADMIN_QUERY_KEYS.WORKERS,
-    queryFn: () => adminService.getWorkers(),
-    select: (data) => data.data,
+    queryKey: [...ADMIN_QUERY_KEYS.WORKERS, page, size],
+    queryFn: () => adminService.getWorkersPaginated(page, size).then(res => res.data),
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useWorkers = (page: number = 0, size: number = 20) => {
+  return useQuery({
+    queryKey: [...ADMIN_QUERY_KEYS.WORKERS, page, size],
+    queryFn: () => adminService.getWorkers().then(res => res.data),
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useWorkerKpi = () => {
+  return useQuery({
+    queryKey: ['workerKpi'],
+    queryFn: () => adminService.getWorkerKpi(),
     staleTime: 60_000,
     refetchOnWindowFocus: false,
   });
@@ -347,4 +364,21 @@ export const useDashboardStats = () => {
   };
 
   return stats;
+};
+
+export const useDisbursementBatches = (page = 0, size = 20) => {
+  return useQuery({
+    queryKey: ['disbursementBatches', page, size],
+    queryFn: () => adminService.getDisbursementBatches(page, size),
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useDisbursementBatch = (uuid: string) => {
+  return useQuery({
+    queryKey: ['disbursementBatch', uuid],
+    queryFn: () => adminService.getDisbursementBatchByUuid(uuid),
+    enabled: !!uuid,
+  });
 };
