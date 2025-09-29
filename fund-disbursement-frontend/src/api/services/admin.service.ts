@@ -399,7 +399,7 @@ class AdminService {
       // Encode it into the URL to ensure both query param and body are available.
       const url = `${API_ENDPOINTS.DISBURSEMENTS.SINGLE}?workerUuid=${encodeURIComponent(
         data.workerUuid
-      )}`;
+      )}&amount=${encodeURIComponent(String(data.amount))}`;
       const response = await apiClient.post<DisbursementResponse>(url, data);
       return response;
     } catch (error) {

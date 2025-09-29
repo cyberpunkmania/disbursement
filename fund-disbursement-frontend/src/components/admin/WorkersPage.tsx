@@ -22,7 +22,6 @@ const PAGE_SIZE = 20;
 
 const WorkersPage: React.FC = () => {
   const [page, setPage] = React.useState(0);
-  // Explicitly type the data as PaginatedWorkers | undefined
   const { data: workersData, isLoading } = useWorkersPaginated(page, PAGE_SIZE) as { data?: PaginatedWorkers, isLoading: boolean };
   const deleteWorkerMutation = useDeleteWorker();
   const togglePayableMutation = useToggleWorkerPayable();

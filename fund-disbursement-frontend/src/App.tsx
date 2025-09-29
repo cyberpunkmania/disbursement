@@ -14,7 +14,10 @@ import ModernAdminDashboard from './components/admin/ModernAdminDashboard';
 import PositionsPage from './components/admin/PositionsPage';
 import WorkersPage from './components/admin/WorkersPage';
 import PayrollPage from './components/admin/PayrollPage';
-import DisbursementsPage from './components/admin/DisbursementsPage';
+// import DisbursementsPage from './components/admin/DisbursementsPage';
+import SingleDisbursementPage from './components/admin/SingleDisbursementPage';
+import BatchDisbursementPage from './components/admin/BatchDisbursementPage';
+// import PayoutsPage from './components/admin/PayoutsPage';
 import SettingsPage from './components/admin/SettingsPage';
 import PositionsApiTest from './components/admin/PositionsApiTest';
 
@@ -78,7 +81,13 @@ function App() {
               <Route path="positions-test" element={<PositionsApiTest />} />
               <Route path="workers" element={<WorkersPage />} />
               <Route path="payroll" element={<PayrollPage />} />
-              <Route path="disbursements" element={<DisbursementsPage />} />
+              
+              {/* Disbursements Routes with Submenu */}
+              {/* <Route path="disbursements" element={<DisbursementsPage />} /> */}
+              <Route path="disbursements/single" element={<SingleDisbursementPage />} />
+              <Route path="disbursements/batch" element={<BatchDisbursementPage />} />
+              {/* <Route path="disbursements/payouts" element={<PayoutsPage />} /> */}
+              
               <Route path="settings" element={<SettingsPage />} />
               <Route index element={<Navigate to="dashboard" replace />} />
             </Route>
