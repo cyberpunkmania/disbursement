@@ -53,7 +53,7 @@ export const AdminLayout: React.FC = () => {
         // { name: 'Overview', href: '/admin/disbursements' },
         { name: 'Single', href: '/admin/disbursements/single' },
         { name: 'Batch', href: '/admin/disbursements/batch' },
-        // { name: 'Payouts', href: '/admin/disbursements/payouts' },
+        { name: 'Payouts', href: '/admin/disbursements/payouts' },
       ]
     },
     { name: 'Settings', href: '/admin/settings', icon: Cog6ToothIcon },

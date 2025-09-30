@@ -383,3 +383,27 @@ export const useDisbursementBatch = (uuid: string) => {
     enabled: !!uuid,
   });
 };
+
+// Add to query keys section
+export const PAYOUTS_QUERY_KEYS = {
+  PAYOUTS: (page: number, size: number) => ['payouts', 'search', page, size] as const,
+  PAYOUT: (uuid: string) => ['payouts', uuid] as const,
+};
+
+// Add these hooks
+export const usePayouts = (page: number = 0, size: number = 10) => {
+  return useQuery({
+    queryKey: PAYOUTS_QUERY_KEYS.PAYOUTS(page, size),
+    queryFn: () => adminService.getPayouts(page, size).then(res => res.data),
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const usePayout = (uuid: string) => {
+  return useQuery({
+    queryKey: PAYOUTS_QUERY_KEYS.PAYOUT(uuid),
+    queryFn: () => adminService.getPayoutByUuid(uuid).then(res => res.data),
+    enabled: !!uuid,
+  });
+};

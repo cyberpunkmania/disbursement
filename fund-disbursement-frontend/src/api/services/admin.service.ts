@@ -19,6 +19,8 @@ import type {
   StatusResponse,
   BatchResponse,
   WorkerKpi,
+  Payout,
+  PayoutsSearchParams,
 } from '../../types/admin.types';
 import type { ApiResponse } from '../../types/api.types';
 import { z } from 'zod';
@@ -680,6 +682,79 @@ class AdminService {
   //   const response = await apiClient.post(API_ENDPOINTS.DISBURSEMENTS.SEND_BATCH(batchUuid));
   //   return response.data;
   // }
+
+  async getPayouts(page: number = 0, size: number = 10): Promise<ApiResponse<{
+  content: Payout[];
+  totalPages: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+  totalElements: number;
+}>> {
+  try {
+    const response = await apiClient.get<{
+      content: Payout[];
+      totalPages: number;
+      number: number;
+      first: boolean;
+      last: boolean;
+      totalElements: number;
+    }>(
+      API_ENDPOINTS.PAYOUTS.SEARCH(page, size)
+    );
+    return response;
+  } catch (error) {
+    console.error('Failed to fetch payouts:', error);
+    throw error;
+  }
+}
+
+async getPayoutByUuid(uuid: string): Promise<ApiResponse<Payout>> {
+  this.validateUuid(uuid);
+  try {
+    const response = await apiClient.get<Payout>(
+      API_ENDPOINTS.PAYOUTS.BY_UUID(uuid)
+    );
+    return response;
+  } catch (error) {
+    console.error(`Failed to fetch payout ${uuid}:`, error);
+    throw error;
+  }
+}
+
+async searchPayouts(params: PayoutsSearchParams = {}): Promise<ApiResponse<{
+  content: Payout[];
+  totalPages: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+  totalElements: number;
+}>> {
+  try {
+    const queryParams = new URLSearchParams();
+    
+    if (params.page !== undefined) queryParams.append('page', params.page.toString());
+    if (params.size !== undefined) queryParams.append('size', params.size.toString());
+    if (params.sort) queryParams.append('sort', params.sort);
+    if (params.workerName) queryParams.append('workerName', params.workerName);
+    if (params.state) queryParams.append('state', params.state);
+    if (params.batchUuid) queryParams.append('batchUuid', params.batchUuid);
+
+    const url = `${API_ENDPOINTS.PAYOUTS.SEARCH(params.page, params.size)}`;
+    const response = await apiClient.get<{
+      content: Payout[];
+      totalPages: number;
+      number: number;
+      first: boolean;
+      last: boolean;
+      totalElements: number;
+    }>(url);
+    return response;
+  } catch (error) {
+    console.error('Failed to search payouts:', error);
+    throw error;
+  }
+}
 }
 
 export const adminService = new AdminService();

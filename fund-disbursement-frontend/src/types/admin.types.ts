@@ -191,3 +191,33 @@ export interface StatusResponse {
 export interface BatchResponse {
   batchUuid: string;
 }
+
+export interface Payout {
+  uuid: string;
+  createdAt: string;
+  batchUuid: string;
+  workerUuid: string;
+  workerName: string;
+  workerPhone: string;
+  amount: number;
+  msisdn: string;
+  state: 'PENDING' | 'SENT' | 'COMPLETED' | 'FAILED';
+  mpesaExternalRef: string | null;
+  mpesaReceipt: string | null;
+  mpesaResultCode: string | null;
+  mpesaResultDesc: string | null;
+  sentAt: string | null;
+  finalizedAt: string | null;
+  positionName: string | null;
+  mpesaOriginatorConversationId: string | null;
+  mpesaConversationId: string | null;
+}
+
+export interface PayoutsSearchParams {
+  page?: number;
+  size?: number;
+  sort?: string;
+  workerName?: string;
+  state?: string;
+  batchUuid?: string;
+}

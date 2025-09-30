@@ -17,7 +17,7 @@ import PayrollPage from './components/admin/PayrollPage';
 // import DisbursementsPage from './components/admin/DisbursementsPage';
 import SingleDisbursementPage from './components/admin/SingleDisbursementPage';
 import BatchDisbursementPage from './components/admin/BatchDisbursementPage';
-// import PayoutsPage from './components/admin/PayoutsPage';
+import PayoutsPage from './components/admin/PayoutsPage';
 import SettingsPage from './components/admin/SettingsPage';
 import PositionsApiTest from './components/admin/PositionsApiTest';
 
@@ -86,7 +86,7 @@ function App() {
               {/* <Route path="disbursements" element={<DisbursementsPage />} /> */}
               <Route path="disbursements/single" element={<SingleDisbursementPage />} />
               <Route path="disbursements/batch" element={<BatchDisbursementPage />} />
-              {/* <Route path="disbursements/payouts" element={<PayoutsPage />} /> */}
+              <Route path="disbursements/payouts" element={<PayoutsPage />} />
               
               <Route path="settings" element={<SettingsPage />} />
               <Route index element={<Navigate to="dashboard" replace />} />
