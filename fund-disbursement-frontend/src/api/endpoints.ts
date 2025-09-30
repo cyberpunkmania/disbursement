@@ -51,4 +51,9 @@ export const API_ENDPOINTS = {
   KPI: {
     WORKERS: '/kpi/workers',
   },
+  PAYOUTS: {
+    SEARCH: (page: number = 0, size: number = 10) =>
+      `/search/payouts?page=${page}&size=${size}&sort=createdAt,DESC`,
+    BY_UUID: (uuid: string) => `/payouts/${uuid}`,
+  }
 } as const;
