@@ -21,6 +21,7 @@ import type {
   WorkerKpi,
   Payout,
   PayoutsSearchParams,
+  PayoutKpi,
 } from '../../types/admin.types';
 import type { ApiResponse } from '../../types/api.types';
 import { z } from 'zod';
@@ -754,6 +755,14 @@ async searchPayouts(params: PayoutsSearchParams = {}): Promise<ApiResponse<{
     console.error('Failed to search payouts:', error);
     throw error;
   }
+}
+
+async getPayoutKpi() {
+  const response = await apiClient.get<PayoutKpi>(
+    API_ENDPOINTS.KPI.PAYOUTS
+  );
+  console.log('Payout KPI Response:', response.data);
+  return response.data;
 }
 }
 

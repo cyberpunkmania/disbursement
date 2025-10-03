@@ -407,3 +407,10 @@ export const usePayout = (uuid: string) => {
     enabled: !!uuid,
   });
 };
+
+export const usePayoutKpi = () => {
+  return useQuery({
+    queryKey: ['payoutKpi'],
+    queryFn: () => adminService.getPayoutKpi(),
+  });
+};

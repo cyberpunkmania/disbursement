@@ -3,6 +3,7 @@ import { usePayouts } from '@/hooks/useAdmin';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import DataTable from '@/components/ui/DataTable';
 import type { Payout } from '@/types/admin.types';
+import PayoutStatCards from './PayoutStatCards';
 
 type PaginatedPayouts = {
   content: Payout[];
@@ -63,6 +64,8 @@ const PayoutsPage: React.FC = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto">
+      <PayoutStatCards />
+
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Payouts</h2>
         

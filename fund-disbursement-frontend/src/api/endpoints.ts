@@ -50,6 +50,7 @@ export const API_ENDPOINTS = {
   },
   KPI: {
     WORKERS: '/kpi/workers',
+    PAYOUTS: '/kpi/payouts',
   },
   PAYOUTS: {
     SEARCH: (page: number = 0, size: number = 10) =>

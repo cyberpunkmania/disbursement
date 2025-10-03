@@ -221,3 +221,13 @@ export interface PayoutsSearchParams {
   state?: string;
   batchUuid?: string;
 }
+
+export type PayoutKpi = {
+  total: number;
+  pending: number;
+  sent: number;
+  success: number;
+  failed: number;
+  totalAmount: number;
+  successAmount: number;
+};
